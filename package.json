@@ -1,0 +1,16 @@
+
+{
+  "name": "lmc-pro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LMC Pro Camera App",
+  "scripts": {
+    "build": "echo Build complete"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}
