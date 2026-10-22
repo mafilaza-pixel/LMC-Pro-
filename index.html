@@ -265,7 +265,462 @@ select {
   </div>
 </div>
 
-<!-- Ampahany manaraka: filtres, AI, Pro, galerie ary réglages -->
+
+<!-- LMC PRO: FILTRES, AI ENHANCE, MODE PRO ET REGLAGES -->
+
+<div id="filtersSection" class="section">
+  <h2>🎨 Filtres LMC Pro</h2>
+  <div class="card">
+    <p>Choisir un filtre</p>
+    <div class="filter-grid">
+      <button class="filter-item selected" data-filter="normal">Naturel</button>
+      <button class="filter-item" data-filter="vivid">Vivid</button>
+      <button class="filter-item" data-filter="warm">Warm</button>
+      <button class="filter-item" data-filter="cool">Cool</button>
+      <button class="filter-item" data-filter="mono">Noir & Blanc</button>
+      <button class="filter-item" data-filter="night">Night</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row">
+      <span>Intensité du filtre</span>
+      <strong id="filterValue">50%</strong>
+    </div>
+    <input id="filterIntensity" type="range" min="0" max="100" value="50">
+  </div>
+  <p class="note">Les filtres sont des réglages d'aperçu. L'application Android devra aussi appliquer le filtre à la photo enregistrée.</p>
+</div>
+
+<div id="aiSection" class="section">
+  <h2>✨ AI Enhance</h2>
+  <div class="card">
+    <div class="row">
+      <span>Amélioration automatique</span>
+      <input type="checkbox" id="autoEnhance" checked>
+    </div>
+    <div class="row">
+      <span>Auto Resolution</span>
+      <input type="checkbox" id="autoResolution" checked>
+    </div>
+    <div class="row">
+      <span>Réduction du bruit</span>
+      <input type="checkbox" id="noiseReduction" checked>
+    </div>
+    <div class="row">
+      <span>Amélioration des couleurs</span>
+      <input type="checkbox" id="colorEnhance" checked>
+    </div>
+    <button class="yellow-btn" id="enhanceBtn">✨ Activer les réglages</button>
+    <p id="aiStatus" class="note">Réglages prêts à être configurés.</p>
+  </div>
+</div>
+
+<div id="proSection" class="section">
+  <h2>⚙️ Mode Pro</h2>
+  <div class="card">
+    <div class="row">
+      <label for="iso">ISO</label>
+      <select id="iso">
+        <option value="auto">Auto</option>
+        <option value="100">100</option>
+        <option value="200">200</option>
+        <option value="400">400</option>
+        <option value="800">800</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="whiteBalance">Balance des blancs</label>
+      <select id="whiteBalance">
+        <option>Auto</option>
+        <option>Jour</option>
+        <option>Nuageux</option>
+        <option>Tungstène</option>
+      </select>
+    </div>
+    <div class="row">
+      <label for="exposure">Exposition EV</label>
+      <span id="evValue">0</span>
+    </div>
+    <input id="exposure" type="range" min="-2" max="2" step="0.5" value="0">
+    <p class="note">Les contrôles ISO et balance des blancs sont ici une interface. Leur fonctionnement réel dépendra de l'intégration CameraX et du matériel Android.</p>
+  </div>
+</div>
+
+<div id="gallerySection" class="section">
+  <h2>🖼️ Galerie</h2>
+  <div class="card">
+    <p>Vos photos et vidéos apparaîtront ici.</p>
+    <input id="photoFiles" type="file" accept="image/*,video/*" multiple>
+    <div id="galleryPreview"></div>
+    <p class="note">Cette version permet de sélectionner des fichiers. La galerie native sera ajoutée dans la version Android.</p>
+  </div>
+</div>
+
+<div id="settingsSection" class="section">
+  <h2>⚙️ Paramètres</h2>
+  <div class="card">
+    <div class="row">
+      <span>Grille caméra</span>
+      <input type="checkbox" id="gridToggle">
+    </div>
+    <div class="row">
+      <span>Résolution automatique</span>
+      <input type="checkbox" id="resolutionToggle" checked>
+    </div>
+    <div class="row">
+      <span>Mode léger</span>
+      <input type="checkbox" id="liteToggle" checked>
+    </div>
+    <div class="row">
+      <span>Qualité photo</span>
+      <select id="quality">
+        <option value="high">Élevée</option>
+        <option value="balanced" selected>Équilibrée</option>
+        <option value="small">Économiser l'espace</option>
+      </select>
+    </div>
+    <button class="yellow-btn" id="saveSettings">Enregistrer les réglages</button>
+    <p id="settingsStatus" class="note"></p>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="active" data-section="cameraSection">📷<br>Caméra</button>
+  <button data-section="filtersSection">🎨<br>Filtres</button>
+  <button data-section="aiSection">✨<br>AI Enhance</button>
+  <button data-section="proSection">⚙️<br>Pro</button>
+  <button data-section="gallerySection">🖼️<br>Galerie</button>
+  <button data-section="settingsSection">☰<br>Réglages</button>
+</nav>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(function(section) {
+    section.classList.remove("active");
+  });
+  const target = document.getElementById(id);
+  if (target) target.classList.add("active");
+
+  document.querySelectorAll(".bottom-nav button").forEach(function(button) {
+    button.classList.toggle("active", button.dataset.section === id);
+  });
+}
+
+document.querySelectorAll(".bottom-nav button").forEach(function(button) {
+  button.addEventListener("click", function() {
+    showSection(button.dataset.section);
+  });
+});
+
+document.querySelectorAll(".filter-item").forEach(function(button) {
+  button.addEventListener("click", function() {
+    document.querySelectorAll(".filter-item").forEach(function(item) {
+      item.classList.remove("selected");
+    });
+    button.classList.add("selected");
+    document.getElementById("preview").style.filter =
+      button.dataset.filter === "vivid" ? "saturate(1.5)" :
+      button.dataset.filter === "warm" ? "sepia(.35)" :
+      button.dataset.filter === "cool" ? "hue-rotate(15deg)" :
+      button.dataset.filter === "mono" ? "grayscale(1)" :
+      button.dataset.filter === "night" ? "brightness(.75) contrast(1.2)" : "none";
+  });
+});
+
+document.getElementById("filterIntensity").addEventListener("input", function() {
+  document.getElementById("filterValue").textContent = this.value + "%";
+});
+
+document.getElementById("exposure").addEventListener("input", function() {
+  document.getElementById("evValue").textContent = this.value;
+});
+
+document.getElementById("enhanceBtn").addEventListener("click", function() {
+  const enabled = document.getElementById("autoEnhance").checked;
+  document.getElementById("aiStatus").textContent =
+    enabled ? "Amélioration automatique activée dans les réglages." :
+    "Amélioration automatique désactivée.";
+});
+
+document.getElementById("gridToggle").addEventListener("change", function() {
+  document.getElementById("gridLines").style.display = this.checked ? "block" : "none";
+});
+
+document.getElementById("saveSettings").addEventListener("click", function() {
+  document.getElementById("settingsStatus").textContent =
+    "Réglages appliqués à cette session.";
+});
+
+document.getElementById("photoFiles").addEventListener("change", function() {
+  const gallery = document.getElementById("galleryPreview");
+  gallery.innerHTML = "";
+  Array.from(this.files).forEach(function(file) {
+    const url = URL.createObjectURL(file);
+    const item = document.createElement(file.type.startsWith("video/") ? "video" : "img");
+    item.src = url;
+    item.style.width = "100px";
+    item.style.margin = "5px";
+    item.style.borderRadius = "8px";
+    if (item.tagName === "VIDEO") item.controls = true;
+    gallery.appendChild(item);
+  });
+});
+</script>
+
+<script>
+/* LMC Pro - Camera controls */
+
+let cameraStream = null;
+let currentFacing = "environment";
+let recording = false;
+let mediaRecorder = null;
+let recordedChunks = [];
+let flashEnabled = false;
+let currentZoom = 1;
+
+const cameraVideo = document.getElementById("video");
+const cameraMessage = document.getElementById("previewMessage");
+
+async function startLmcCamera() {
+  try {
+    if (!navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia) {
+      alert("Sokafy amin'ny navigateur manohana caméra sy HTTPS.");
+      return;
+    }
+
+    stopLmcCamera();
+
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: currentFacing,
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    });
+
+    cameraVideo.srcObject = cameraStream;
+    cameraVideo.style.display = "block";
+    cameraMessage.style.display = "none";
+
+    await cameraVideo.play();
+  } catch (error) {
+    alert(
+      "Tsy afaka nanokatra caméra. Omeo alalana ny navigateur, " +
+      "ary hamarino fa tsy ampiasain'ny application hafa izy."
+    );
+    console.error(error);
+  }
+}
+
+function stopLmcCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+    cameraStream = null;
+  }
+  cameraVideo.srcObject = null;
+}
+
+document.getElementById("startCamera")
+  .addEventListener("click", startLmcCamera);
+
+document.getElementById("switchBtn")
+  .addEventListener("click", async function() {
+    currentFacing =
+      currentFacing === "environment" ? "user" : "environment";
+    await startLmcCamera();
+  });
+
+document.getElementById("zoom1")
+  .addEventListener("click", function() {
+    setLmcZoom(1);
+  });
+
+document.getElementById("zoom2")
+  .addEventListener("click", function() {
+    setLmcZoom(2);
+  });
+
+function setLmcZoom(value) {
+  currentZoom = value;
+
+  const track = cameraStream &&
+    cameraStream.getVideoTracks()[0];
+
+  if (!track) {
+    alert("Alefaso aloha ny caméra.");
+    return;
+  }
+
+  const capabilities = track.getCapabilities ?
+    track.getCapabilities() : {};
+
+  if (capabilities.zoom) {
+    const zoom = Math.min(
+      capabilities.zoom.max,
+      Math.max(capabilities.zoom.min, value)
+    );
+    track.applyConstraints({
+      advanced: [{ zoom: zoom }]
+    }).catch(() => {
+      alert("Tsy tohanan'ity caméra ity ny zoom nangatahana.");
+    });
+  } else {
+    alert("Tsy tohanan'ny navigateur na caméra ny zoom matériel.");
+  }
+}
+
+document.getElementById("flashBtn")
+  .addEventListener("click", async function() {
+    const track = cameraStream &&
+      cameraStream.getVideoTracks()[0];
+
+    if (!track) {
+      alert("Alefaso aloha ny caméra.");
+      return;
+    }
+
+    const capabilities = track.getCapabilities ?
+      track.getCapabilities() : {};
+
+    if (!capabilities.torch) {
+      alert("Tsy tohanan'ity caméra ity ny flash amin'ity mode ity.");
+      return;
+    }
+
+    flashEnabled = !flashEnabled;
+
+    try {
+      await track.applyConstraints({
+        advanced: [{ torch: flashEnabled }]
+      });
+      this.style.color = flashEnabled ? "#ffd400" : "white";
+    } catch (error) {
+      flashEnabled = false;
+      alert("Tsy afaka nampandeha ny flash.");
+    }
+  });
+
+document.getElementById("shutterBtn")
+  .addEventListener("click", function() {
+    if (!cameraStream || !cameraVideo.videoWidth) {
+      alert("Tsindrio aloha ny bokotra caméra.");
+      return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = cameraVideo.videoWidth;
+    canvas.height = cameraVideo.videoHeight;
+
+    const context = canvas.getContext("2d");
+    context.filter =
+      document.getElementById("preview").style.filter || "none";
+
+    context.drawImage(
+      cameraVideo, 0, 0, canvas.width, canvas.height
+    );
+
+    canvas.toBlob(function(blob) {
+      if (!blob) {
+        alert("Tsy afaka namorona sary.");
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "LMC-Pro-" + Date.now() + ".jpg";
+      link.click();
+
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    }, "image/jpeg", 0.92);
+  });
+
+document.getElementById("recordBtn")
+  .addEventListener("click", function() {
+    if (!cameraStream) {
+      alert("Alefaso aloha ny caméra.");
+      return;
+    }
+
+    if (!window.MediaRecorder) {
+      alert("Tsy tohanan'ity navigateur ity ny fakana vidéo.");
+      return;
+    }
+
+    if (!recording) {
+      recordedChunks = [];
+
+      const mimeType =
+        MediaRecorder.isTypeSupported("video/webm;codecs=vp8")
+          ? "video/webm;codecs=vp8"
+          : "video/webm";
+
+      try {
+        mediaRecorder = new MediaRecorder(
+          cameraStream,
+          { mimeType: mimeType }
+        );
+      } catch (error) {
+        alert("Tsy afaka nanomboka ny vidéo.");
+        return;
+      }
+
+      mediaRecorder.ondataavailable = function(event) {
+        if (event.data && event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = function() {
+        const blob = new Blob(recordedChunks, {
+          type: mediaRecorder.mimeType || "video/webm"
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "LMC-Pro-" + Date.now() + ".webm";
+        link.click();
+
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      };
+
+      mediaRecorder.start();
+      recording = true;
+      this.textContent = "⏹";
+      this.style.color = "#ff4444";
+    } else {
+      mediaRecorder.stop();
+      recording = false;
+      this.textContent = "⏺";
+      this.style.color = "white";
+    }
+  });
+
+document.querySelectorAll("#modeRow button")
+  .forEach(function(button) {
+    button.addEventListener("click", function() {
+      document.querySelectorAll("#modeRow button")
+        .forEach(item => item.classList.remove("active"));
+
+      button.classList.add("active");
+
+      const mode = button.dataset.mode;
+
+      if (mode === "Vidéo") {
+        document.getElementById("recordBtn").style.display = "block";
+      } else if (mode === "Plus") {
+        showSection("settingsSection");
+      }
+    });
+  });
+
+window.addEventListener("pagehide", stopLmcCamera);
+</script>
+</body>
+</html>
 
 </div>
 </body>
