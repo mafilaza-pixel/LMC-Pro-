@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05080d">
+<title>LMC Pro</title>
+<style>
+:root{--bg:#05080d;
+--panel:#101722;
+--panel2:#151e2a;
+--line:#253244;
+--yellow:#ffd400;
+--text:#f4f7fb;
+--muted:#9ba9bb;
+--blue:#168cff}
+
+*{box-sizing:border-box}
+body{margin:0;
+background:var(--bg);
+color:var(--text);
+font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer;
+color:inherit}
+.app{max-width:520px;
+margin:auto;
+min-height:100dvh;
+background:linear-gradient(180deg,#070b11,#030508)}
+.top{height:58px;
+padding:0 16px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:#080c12;
+position:sticky;
+top:0;
+z-index:5;
+border-bottom:1px solid #192231}
+.brand{font-weight:800;
+letter-spacing:.3px}
+.brand b{color:var(--yellow)}
+.top-actions{display:flex;
+gap:9px}
+.iconbtn{border:1px solid var(--line);
+background:#111924;
+border-radius:12px;
+padding:8px 10px}
+.screen{display:none;
+padding:14px 13px 95px}
+.screen.active{display:block}
+.camera-view{height:min(56vh,490px);
+min-height:300px;
+border-radius:20px;
+overflow:hidden;
+position:relative;
+background:radial-gradient(circle at 50% 25%,#235d88,#102b40 45%,#07111c 75%);
+border:1px solid #26384b}
+.camera-view:before{content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(180deg,transparent 60%,#0009),linear-gradient(90deg,transparent 49.8%,#ffffff30 50%,transparent 50.2%);
+pointer-events:none}
+.camera-view video{width:100%;
+height:100%;
+object-fit:cover;
+display:none}
+.cam-top{position:absolute;
+top:12px;
+left:12px;
+right:12px;
+display:flex;
+justify-content:space-between;
+gap:8px}
+.pill{background:#05080dcc;
+border:1px solid #334154;
+border-radius:20px;
+padding:7px 10px;
+font-size:12px}
+.pill.hot{color:var(--yellow)}
+.scene-label{position:absolute;
+left:14px;
+bottom:14px;
+color:#e4f3ff;
+font-size:12px;
+text-shadow:0 1px 4px #000}
+.zoomrow{display:flex;
+justify-content:center;
+gap:12px;
+padding:12px}
+.zoom{border:0;
+border-radius:50%;
+background:#141d28;
+padding:8px 12px}
+.zoom.selected{border:1px solid var(--yellow);
+color:var(--yellow)}
+.shortcuts{display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:8px;
+margin:7px 0 12px}
+.shortcut{background:var(--panel);
+border:1px solid var(--line);
+border-radius:13px;
+padding:12px 4px;
+text-align:center;
+font-size:12px}
+.shortcut span{display:block;
+font-size:20px;
+margin-bottom:4px}
+.modes{display:flex;
+justify-content:space-around;
+gap:6px;
+margin:8px 0 17px}
+.mode{background:transparent;
+border:1px solid transparent;
+border-radius:13px;
+padding:8px 10px;
+color:var(--muted)}
+.mode.selected{border-color:#786700;
+color:var(--yellow);
+background:#30290066}
+.shutterrow{display:flex;
+align-items:center;
+justify-content:space-between;
+padding:2px 18px}
+.shutter{width:68px;
+height:68px;
+border-radius:50%;
+background:#fff;
+border:5px solid #1a202a;
+outline:2px solid #e8edf4;
+box-shadow:0 0 0 5px #ffffff14}
+.roundbtn{width:45px;
+height:45px;
+border:1px solid #334154;
+background:#111924;
+border-radius:50%;
+font-size:18px}
+.thumb{width:43px;
+height:43px;
+border-radius:12px;
+background:linear-gradient(135deg,#3b8ab5,#142d44);
+border:2px solid #66768a}
+.section-title{display:flex;
+align-items:center;
+justify-content:space-between;
+margin:5px 0 14px}
+.section-title h2{font-size:20px;
+margin:0}
+.back{background:transparent;
+border:0;
+font-size:22px;
+color:var(--muted)}
+.card{background:var(--panel);
+border:1px solid var(--line);
+border-radius:16px;
+padding:13px;
+margin:10px 0}
+.muted{color:var(--muted)}
+.tabs{display:flex;
+gap:8px;
+overflow:auto;
+margin:10px 0 13px}
+.tab{white-space:nowrap;
+border:1px solid var(--line);
+border-radius:20px;
+padding:7px 12px;
+background:#0b111a;
+color:var(--muted)}
+.tab.selected{color:var(--yellow);
+border-color:#8e7800}
+.filtergrid{display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px}
+.filtertile{background:var(--panel);
+border:1px solid var(--line);
+border-radius:12px;
+padding:6px;
+text-align:center}
+.filter-preview{height:82px;
+border-radius:8px;
+margin-bottom:7px;
+background:linear-gradient(135deg,#7fc6ed,#2868a2 45%,#e7b85b)}
+.filtertile.selected{border:2px solid var(--yellow)}
+.filtertile small{color:var(--muted)}
+.slider{width:100%;
+accent-color:var(--yellow)}
+.labelrow{display:flex;
+justify-content:space-between;
+gap:10px;
+margin:12px 0 6px}.field{width:100%;
+background:#080e17;
+color:white;
+border:1px solid var(--line);
+border-radius:10px;
+padding:11px}
+.action{width:100%;
+padding:13px;
+border:0;
+border-radius:13px;
+background:var(--yellow);
+color:#111;
+font-weight:800}
+.action.secondary{background:#182333;
+color:white;
+border:1px solid var(--line)}
+.bottomnav{position:fixed;
+bottom:0;
+left:50%;
+transform:translateX(-50%);
+width:100%;
+max-width:520px;
+display:grid;
+grid-template-columns:repeat(5,1fr);
+background:#080c12;
+border-top:1px solid #263244;
+padding:8px 4px max(8px,env(safe-area-inset-bottom));
+z-index:10}
+.navbtn{background:transparent;
+border:0;
+color:var(--muted);
+font-size:11px;
+padding:5px 0}
+.navbtn span{display:block;
+font-size:20px;
+margin-bottom:3px}
+.navbtn.selected{color:var(--yellow)}
+.row{display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px}
+.switch{accent-color:var(--yellow);
+width:20px;
+height:20px}
+.gallerygrid{display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:5px}
+.galleryitem{height:105px;
+border-radius:9px;
+background:linear-gradient(135deg,#3177a5,#10263b);
+display:grid;
+place-items:center;
+font-size:25px}
+.listitem{padding:13px 3px;
+border-bottom:1px solid var(--line)}
+@media(min-width:600px){
+.app{border-left:1px solid var(--line);
+border-right:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="top">
+  <div class="brand">📷 <b>LMC</b> PRO</div>
+  <div class="top-actions">
+    <button class="iconbtn" onclick="showScreen('ai')">✨ AI</button>
+    <button class="iconbtn" onclick="showScreen('settings')">⚙️</button>
+  </div>
+</header>
+
+<!-- ECRAN PRINCIPAL -->
+<section class="screen active" id="home">
+
+  <div class="camera-view" id="cameraView">
+    <video id="cameraVideo" autoplay playsinline></video>
+
+    <div class="cam-top">
+      <button class="pill" onclick="toggleFlash()">⚡ Flash</button>
+      <span class="pill hot">HDR+</span>
+      <button class="pill" onclick="showScreen('ai')">✨ AI</button>
+    </div>
+
+    <div class="scene-label">LMC Pro Camera</div>
+  </div>
+
+  <div class="zoomrow">
+    <button class="zoom selected" onclick="setZoom(1,this)">1x</button>
+    <button class="zoom" onclick="setZoom(2,this)">2x</button>
+    <button class="zoom" onclick="setZoom(3,this)">3x</button>
+  </div>
+
+  <div class="shortcuts">
+    <button class="shortcut" onclick="showScreen('filters')">
+      <span>🎨</span>Filtres
+    </button>
+    <button class="shortcut" onclick="showScreen('ai')">
+      <span>✨</span>AI Enhance
+    </button>
+    <button class="shortcut" onclick="showScreen('pro')">
+      <span>⚙️</span>Pro
+    </button>
+    <button class="shortcut" onclick="showScreen('settings')">
+      <span>🔧</span>Modes
+    </button>
+  </div>
+
+  <div class="modes">
+    <button class="mode" onclick="setMode(this)">Nuit</button>
+    <button class="mode" onclick="setMode(this)">Portrait</button>
+    <button class="mode selected" onclick="setMode(this)">Photo</button>
+    <button class="mode" onclick="setMode(this)">Vidéo</button>
+    <button class="mode" onclick="showScreen('modes')">Plus</button>
+  </div>
+
+  <div class="shutterrow">
+    <button class="thumb" onclick="showScreen('gallery')">🖼️</button>
+    <button class="shutter" onclick="takePhoto()"></button>
+    <button class="roundbtn" onclick="switchCamera()">🔄</button>
+  </div>
+
+  <div class="row" style="margin-top:18px">
+    <span class="muted" id="cameraStatus">Caméra prête</span>
+    <button class="iconbtn" onclick="startCamera()">▶ Ouvrir caméra</button>
+  </div>
+</section>
+
+<!-- FILTRES -->
+<section class="screen" id="filters">
+  <div class="section-title">
+    <button class="back" onclick="showScreen('home')">‹</button>
+    <h2>Filtres</h2>
+    <span>✓</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab selected">Tous</button>
+    <button class="tab">Naturel</button>
+    <button class="tab">Cinéma</button>
+    <button class="tab">Couleur</button>
+    <button class="tab">N&B</button>
+  </div>
+
+  <div class="filtergrid">
+    <button class="filtertile selected" onclick="chooseFilter(this,'Naturel')">
+      <div class="filter-preview"></div>
+      Naturel
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'HDR+')">
+      <div class="filter-preview"></div>
+      HDR+
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Vif')">
+      <div class="filter-preview"></div>
+      Vif
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Chaud')">
+      <div class="filter-preview"></div>
+      Chaud
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Froid')">
+      <div class="filter-preview"></div>
+      Froid
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Portrait')">
+      <div class="filter-preview"></div>
+      Portrait
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Nuit')">
+      <div class="filter-preview"></div>
+      Nuit
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Noir et blanc')">
+      <div class="filter-preview"></div>
+      Noir et blanc
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Vintage')">
+      <div class="filter-preview"></div>
+      Vintage
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Cinéma')">
+      <div class="filter-preview"></div>
+      Cinéma
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Bleu')">
+      <div class="filter-preview"></div>
+      Bleu
+    </button>
+    <button class="filtertile" onclick="chooseFilter(this,'Golden Hour')">
+      <div class="filter-preview"></div>
+      Golden Hour
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="labelrow">
+      <span>Intensité du filtre</span>
+      <b id="filterValue">50%</b>
+    </div>
+    <input class="slider" type="range" min="0" max="100"
+      value="50" oninput="filterValue.textContent=this.value+'%'">
+    <button class="action" onclick="showScreen('home')">
+      Appliquer
+    </button>
+  </div>
+</section><!-- AI ENHANCE -->
+<section class="screen" id="ai">
+
+  <div class="section-title">
+    <button class="back" onclick="showScreen('home')">‹</button>
+    <h2>✨ AI Enhance</h2>
+    <button class="iconbtn" onclick="showScreen('settings')">⚙</button>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <b>Amélioration automatique</b>
+      <input class="switch" type="checkbox" id="aiAuto" checked>
+    </div>
+
+    <div class="labelrow">
+      <span>Clarté</span>
+      <b id="clarityValue">+20</b>
+    </div>
+    <input class="slider" type="range" min="0" max="100"
+      value="20" oninput="clarityValue.textContent='+'+this.value">
+
+    <div class="labelrow">
+      <span>Contraste</span>
+      <b id="contrastValue">+15</b>
+    </div>
+    <input class="slider" type="range" min="0" max="100"
+      value="15" oninput="contrastValue.textContent='+'+this.value">
+
+    <div class="labelrow">
+      <span>Saturation</span>
+      <b id="saturationValue">+10</b>
+    </div>
+    <input class="slider" type="range" min="0" max="100"
+      value="10" oninput="saturationValue.textContent='+'+this.value">
+
+    <div class="labelrow">
+      <span>Réduction du bruit</span>
+      <b id="noiseValue">+10</b>
+    </div>
+    <input class="slider" type="range" min="0" max="100"
+      value="10" oninput="noiseValue.textContent='+'+this.value">
+
+    <button class="action" onclick="applyAI()">
+      ✨ Appliquer l'amélioration
+    </button>
+    <p class="muted" id="aiMessage">
+      Sélectionnez une photo pour commencer.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Avant / Après</h3>
+    <div class="gallerygrid">
+      <div class="galleryitem">🖼️</div>
+      <div class="galleryitem">✨</div>
+    </div>
+    <p class="muted">Aperçu de l'amélioration photo.</p>
+  </div>
+</section>
+
+<!-- MODE PRO -->
+<section class="screen" id="pro">
+
+  <div class="section-title">
+    <button class="back" onclick="showScreen('home')">‹</button>
+    <h2>⚙️ Mode Pro</h2>
+    <span>ⓘ</span>
+  </div>
+
+  <div class="camera-view">
+    <div class="scene-label">Aperçu Mode Pro</div>
+  </div>
+
+  <div class="card">
+    <div class="labelrow">
+      <b>ISO</b>
+      <select class="field" id="iso">
+        <option>Auto</option>
+        <option>100</option>
+        <option>200</option>
+        <option>400</option>
+        <option>800</option>
+        <option>1600</option>
+      </select>
+    </div>
+
+    <div class="labelrow">
+      <b>Vitesse d'obturation</b>
+      <select class="field" id="shutterSpeed">
+        <option>Auto</option>
+        <option>1/30</option>
+        <option>1/60</option>
+        <option>1/125</option>
+        <option>1/250</option>
+        <option>1/500</option>
+      </select>
+    </div>
+
+    <div class="labelrow">
+      <b>Balance des blancs</b>
+      <select class="field" id="whiteBalance">
+        <option>Auto</option>
+        <option>Naturel</option>
+        <option>Chaud</option>
+        <option>Froid</option>
+        <option>Nuageux</option>
+      </select>
+    </div>
+
+    <div class="labelrow">
+      <span>Exposition (EV)</span>
+      <b id="evValue">0</b>
+    </div>
+    <input class="slider" type="range" min="-2" max="2"
+      step="0.1" value="0"
+      oninput="evValue.textContent=this.value">
+
+    <div class="labelrow">
+      <span>Mise au point</span>
+      <b>Auto</b>
+    </div>
+
+    <button class="action" onclick="saveProSettings()">
+      Enregistrer les réglages
+    </button>
+
+    <p class="muted">
+      Les réglages manuels réels dépendent des capacités de la caméra Android.
+    </p>
+  </div>
+</section><!-- GALERIE -->
+<section class="screen" id="gallery">
+
+  <div class="section-title">
+    <button class="back" onclick="showScreen('home')">‹</button>
+    <h2>🖼️ Galerie</h2>
+    <span>⋮</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab selected">Photos</button>
+    <button class="tab">Vidéos</button>
+    <button class="tab">Albums</button>
+  </div>
+
+  <div class="card">
+    <h3>Mes photos</h3>
+    <div class="gallerygrid" id="galleryGrid">
+      <div class="galleryitem">📷</div>
+      <div class="galleryitem">🌄</div>
+      <div class="galleryitem">🌅</div>
+      <div class="galleryitem">🌃</div>
+      <div class="galleryitem">🏞️</div>
+      <div class="galleryitem">🌆</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Importer des photos</h3>
+    <input type="file" accept="image/*" multiple
+      onchange="previewGallery(this)">
+    <p class="muted">
+      Safidio eto ireo sary ao amin'ny téléphone-nao.
+    </p>
+  </div>
+</section>
+
+<!-- PARAMETRES -->
+<section class="screen" id="settings">
+
+  <div class="section-title">
+    <button class="back" onclick="showScreen('home')">‹</button>
+    <h2>⚙️ Réglages</h2>
+  </div>
+
+  <div class="card">
+    <h3>📷 Caméra</h3>
+
+    <div class="setting-row">
+      <span>Résolution photo</span>
+      <select class="field">
+        <option>Auto</option>
+        <option>8 MP</option>
+        <option>5 MP</option>
+        <option>3 MP</option>
+      </select>
+    </div>
+
+    <div class="setting-row">
+      <span>Résolution vidéo</span>
+      <select class="field">
+        <option>720p</option>
+        <option>1080p</option>
+        <option>4K si disponible</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <span>HDR+</span>
+      <input class="switch" type="checkbox" checked>
+    </div>
+
+    <div class="row">
+      <span>Grille caméra</span>
+      <input class="switch" type="checkbox" checked>
+    </div>
+
+    <div class="row">
+      <span>Stabilisation</span>
+      <input class="switch" type="checkbox">
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>💾 Stockage</h3>
+
+    <div class="setting-row">
+      <span>Format photo</span>
+      <select class="field">
+        <option>JPEG</option>
+        <option>PNG</option>
+      </select>
+    </div>
+
+    <div class="setting-row">
+      <span>Emplacement</span>
+      <select class="field">
+        <option>Téléphone</option>
+        <option>Carte SD si disponible</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>✨ Autres réglages</h3>
+
+    <div class="row">
+      <span>Amélioration automatique</span>
+      <input class="switch" type="checkbox" checked>
+    </div>
+
+    <div class="row">
+      <span>Mode économie mémoire</span>
+      <input class="switch" type="checkbox" checked>
+    </div>
+
+    <div class="row">
+      <span>Son de capture</span>
+      <input class="switch" type="checkbox">
+    </div>
+  </div>
+
+  <button class="action" onclick="saveSettings()">
+    Enregistrer les réglages
+  </button>
+</section><!-- CONFIGURATION -->
+<section id="config" class="screen">
+  <h2>Configuration</h2>
+  <p>Gérez vos configurations LMC Pro.</p>
+
+  <div class="card">
+    <h3>Importer une configuration</h3>
+    <p>Choisissez un fichier JSON depuis votre téléphone.</p>
+    <input
+      type="file"
+      id="configFile"
+      accept=".json,application/json"
+    >
+    <button onclick="importConfig()">Importer</button>
+  </div>
+
+  <div class="card">
+    <h3>Exporter une configuration</h3>
+    <p>Enregistrez vos paramètres dans un fichier JSON.</p>
+    <button onclick="exportConfig()">Exporter</button>
+  </div>
+
+  <div class="card">
+    <h3>Configuration actuelle</h3>
+    <p id="configStatus">Aucune configuration importée.</p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="screen">
+  <h2>À propos de LMC Pro</h2>
+
+  <div class="card">
+    <h3>LMC Pro Camera</h3>
+    <p>Version 1.0</p>
+    <p>Une interface photo avec filtres, mode Pro et configurations personnalisées.</p>
+    <p>Développé pour une utilisation simple et légère.</p>
+  </div>
+</section><!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+  <button onclick="showScreen('home')">📷<span>Camera</span></button>
+  <button onclick="showScreen('filters')">🎨<span>Filtres</span></button>
+  <button onclick="showScreen('gallery')">🖼️<span>Galerie</span></button>
+  <button onclick="showScreen('config')">⚙️<span>Config</span></button>
+</nav>
+
+<div id="toast" class="toast"></div>
+
+<script>
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(screen) {
+    screen.classList.remove('active');
+  });
+
+  const page = document.getElementById(id);
+  if (page) page.classList.add('active');
+}
+
+function toast(message) {
+  const box = document.getElementById('toast');
+  if (!box) return;
+  box.textContent = message;
+  box.style.display = 'block';
+
+  setTimeout(function() {
+    box.style.display = 'none';
+  }, 2500);
+}
+
+function setMode(element) {
+  document.querySelectorAll('.mode').forEach(function(item) {
+    item.classList.remove('selected');
+  });
+
+  element.classList.add('selected');
+  toast('Mode : ' + element.textContent);
+}
+
+function toggleFlash() {
+  window.flashEnabled = !window.flashEnabled;
+  toast(window.flashEnabled ? 'Flash activé' : 'Flash désactivé');
+}
+
+function zoom(value) {
+  const video = document.querySelector('video');
+  if (video) video.style.transform = 'scale(' + value + ')';
+}
+
+function switchCamera() {
+  window.currentCamera =
+    window.currentCamera === 'user' ? 'environment' : 'user';
+
+  toast('Caméra : ' + (
+    window.currentCamera === 'user' ? 'Avant' : 'Arrière'
+  ));
+
+  startCamera();
+}
+
+async function startCamera() {
+  try {
+    if (!navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia) {
+      toast('Caméra non disponible dans ce navigateur');
+      return;
+    }
+
+    const video = document.querySelector('video');
+    if (!video) {
+      toast('Zone caméra introuvable');
+      return;
+    }
+
+    if (window.cameraStream) {
+      window.cameraStream.getTracks().forEach(track => track.stop());
+    }
+
+    window.cameraStream =
+      await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: window.currentCamera || 'environment'
+        },
+        audio: false
+      });
+
+    video.srcObject = window.cameraStream;
+    await video.play();
+
+  } catch (error) {
+    toast('Impossible d’ouvrir la caméra');
+  }
+}
+
+function takePhoto() {
+  const video = document.querySelector('video');
+
+  if (!video || !video.videoWidth) {
+    toast('Caméra non démarrée');
+    return;
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  canvas.getContext('2d').drawImage(
+    video, 0, 0, canvas.width, canvas.height
+  );
+
+  const link = document.createElement('a');
+  link.download = 'LMC-Pro-photo.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+
+  toast('Photo enregistrée');
+}function chooseFilter(name) {
+  window.selectedFilter = name;
+  toast('Filtre sélectionné : ' + name);
+}
+
+function applyAI() {
+  toast('Mode AI : cette fonction nécessite un vrai moteur IA.');
+}
+
+function saveProSettings() {
+  const values = {};
+
+  document.querySelectorAll(
+    '#pro input, #pro select'
+  ).forEach(function(input) {
+    values[input.id || input.name] = input.value;
+  });
+
+  localStorage.setItem('lmcProSettings', JSON.stringify(values));
+  toast('Paramètres Pro enregistrés');
+}
+
+function saveSettings() {
+  toast('Paramètres enregistrés');
+}
+
+function previewGallery(element) {
+  toast('Aperçu de la galerie');
+}
+
+function importConfig() {
+  const fileInput = document.getElementById('configFile');
+  const file = fileInput && fileInput.files[0];
+
+  if (!file) {
+    toast('Choisissez un fichier JSON');
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    try {
+      const config = JSON.parse(event.target.result);
+
+      localStorage.setItem(
+        'lmcProConfig',
+        JSON.stringify(config)
+      );
+
+      document.getElementById('configStatus').textContent =
+        'Configuration importée avec succès.';
+
+      toast('Importation réussie');
+    } catch (error) {
+      toast('Fichier JSON invalide');
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function exportConfig() {
+  const config = {
+    app: 'LMC Pro',
+    version: '1.0',
+    filter: window.selectedFilter || 'Original',
+    settings: JSON.parse(
+      localStorage.getItem('lmcProSettings') || '{}'
+    )
+  };
+
+  const file = new Blob(
+    [JSON.stringify(config, null, 2)],
+    { type: 'application/json' }
+  );
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(file);
+  link.download = 'LMC-Pro-Config.json';
+  link.click();
+
+  URL.revokeObjectURL(link.href);
+  toast('Configuration exportée');
+}
+
+window.currentCamera = 'environment';
+window.flashEnabled = false;
+window.selectedFilter = 'Original';
+
+showScreen('home');
+</script>
+</div>
+</body>
+</html>
